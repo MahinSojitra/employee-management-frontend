@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top px-3">
+  <a class="navbar-brand" routerLink="/">EMS</a>
+
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarContent"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarContent">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <!-- Employees -->
+      <li class="nav-item" *ngIf="hasRole('Admin')">
+        <a class="nav-link" routerLink="/employees" routerLinkActive="active"
+          >Employees</a
+        >
+      </li>
+
+      <!-- Departments -->
+      <li class="nav-item" *ngIf="hasRole('Admin')">
+        <a class="nav-link" routerLink="/departments" routerLinkActive="active"
+          >Departments</a
+        >
+      </li>
+
+      <!-- Positions -->
+      <li class="nav-item" *ngIf="hasRole('Admin')">
+        <a class="nav-link" routerLink="/positions" routerLinkActive="active"
+          >Positions</a
+        >
+      </li>
+
+      <!-- Account -->
+      <li class="nav-item" *ngIf="isLoggedIn">
+        <a class="nav-link" routerLink="/account" routerLinkActive="active"
+          >Account</a
+        >
+      </li>
+    </ul>
+
+    <div class="d-flex align-items-center">
+      <ng-container *ngIf="isLoggedIn; else guest">
+        <span class="text-light me-3" *ngIf="currentUser">
+          {{ currentUser.firstName }} {{ currentUser.lastName }}
+        </span>
+        <button (click)="onSignOut()" class="btn btn-outline-light btn-sm">
+          Signout
+        </button>
+      </ng-container>
+
+      <ng-template #guest>
+        <button routerLink="/auth/signin" class="btn btn-outline-light btn-sm">
+          Signin
+        </button>
+      </ng-template>
+    </div>
+  </div>
+</nav>

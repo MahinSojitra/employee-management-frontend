@@ -1,0 +1,82 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h4 class="mb-0">
+            <i class="bi bi-building me-2"></i>
+            {{ isEditMode ? "Edit" : "Create" }} Department
+          </h4>
+        </div>
+        <div class="card-body">
+          <!-- Loading Spinner -->
+          <div *ngIf="loading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading...</p>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            {{ error }}
+          </div>
+
+          <!-- Department Form -->
+          <form
+            [formGroup]="departmentForm"
+            (ngSubmit)="onSubmit()"
+            *ngIf="!loading"
+          >
+            <div class="mb-3">
+              <label for="name" class="form-label">Department Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                [ngClass]="{
+                  'is-invalid': name?.invalid && (name?.dirty || name?.touched),
+                  'is-valid': name?.valid && (name?.dirty || name?.touched)
+                }"
+                placeholder="Enter department name"
+              />
+              <div class="invalid-feedback" *ngIf="name?.errors?.['required']">
+                Department name is required
+              </div>
+              <div class="invalid-feedback" *ngIf="name?.errors?.['minlength']">
+                Department name must be at least 2 characters long
+              </div>
+              <div class="invalid-feedback" *ngIf="name?.errors?.['maxlength']">
+                Department name cannot exceed 50 characters
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                routerLink="/departments"
+              >
+                <i class="bi bi-x-lg me-2"></i>
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="departmentForm.invalid || loading"
+              >
+                <i
+                  class="bi"
+                  [ngClass]="isEditMode ? 'bi-save' : 'bi-plus-lg'"
+                ></i>
+                <span class="ms-2">{{ isEditMode ? "Update" : "Create" }}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

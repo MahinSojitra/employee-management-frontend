@@ -1,0 +1,256 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <!-- Loading Spinner -->
+          <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading profile information...</p>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            {{ error }}
+          </div>
+
+          <!-- Profile Information -->
+          <div *ngIf="!loading && !error && profile" class="profile-info">
+            <!-- Profile Header with Avatar -->
+            <div class="text-center mb-4">
+              <div class="d-inline-block position-relative mb-3">
+                <div
+                  class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                  style="
+                    width: 120px;
+                    height: 120px;
+                    font-size: 2.5rem;
+                    font-weight: 500;
+                  "
+                >
+                  {{ profile.firstName.charAt(0) || "?"
+                  }}{{ profile.lastName.charAt(0) || "?" }}
+                </div>
+                <div class="position-absolute bottom-0 end-0">
+                  <span class="badge rounded-pill bg-success p-2">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </span>
+                </div>
+              </div>
+              <h3 class="mb-1 fw-bold">
+                {{ profile.firstName || "N/A" }} {{ profile.lastName || "N/A" }}
+              </h3>
+              <p class="text-muted mb-0 fs-5">
+                <i class="bi bi-briefcase me-2"></i>
+                {{ profile.positionTitle || "N/A" }}
+              </p>
+            </div>
+
+            <div class="row g-4 mb-4">
+              <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                  <div class="card-header bg-light py-3">
+                    <h5 class="mb-0 fw-semibold">
+                      <i class="bi bi-person me-2"></i>
+                      Personal Information
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                      <div
+                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                      >
+                        <i class="bi bi-envelope text-primary"></i>
+                      </div>
+                      <div>
+                        <small class="text-muted d-block">Email</small>
+                        <span class="fw-medium">{{
+                          profile.email || "N/A"
+                        }}</span>
+                      </div>
+                    </div>
+                    <div
+                      class="d-flex align-items-center"
+                      *ngIf="profile.dateOfBirth"
+                    >
+                      <div
+                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                      >
+                        <i class="bi bi-calendar-heart text-primary"></i>
+                      </div>
+                      <div>
+                        <small class="text-muted d-block">Date of Birth</small>
+                        <span class="fw-medium">{{
+                          profile.dateOfBirth
+                            ? (profile.dateOfBirth | date)
+                            : "N/A"
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                  <div class="card-header bg-light py-3">
+                    <h5 class="mb-0 fw-semibold">
+                      <i class="bi bi-building me-2"></i>
+                      Employment Details
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                      <div
+                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                      >
+                        <i class="bi bi-person-badge text-primary"></i>
+                      </div>
+                      <div>
+                        <small class="text-muted d-block">Employee Type</small>
+                        <span class="fw-medium">{{
+                          profile.employeeType || "N/A"
+                        }}</span>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                      <div
+                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                      >
+                        <i class="bi bi-diagram-3 text-primary"></i>
+                      </div>
+                      <div>
+                        <small class="text-muted d-block">Department</small>
+                        <span class="fw-medium">{{
+                          profile.departmentName || "N/A"
+                        }}</span>
+                      </div>
+                    </div>
+                    <div
+                      class="d-flex align-items-center"
+                      *ngIf="profile.hireDate"
+                    >
+                      <div
+                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                      >
+                        <i class="bi bi-calendar-check text-primary"></i>
+                      </div>
+                      <div>
+                        <small class="text-muted d-block">Hire Date</small>
+                        <span class="fw-medium">{{
+                          profile.hireDate ? (profile.hireDate | date) : "N/A"
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-header bg-light py-3">
+                    <h5 class="mb-0 fw-semibold">
+                      <i class="bi bi-geo-alt me-2"></i>
+                      Address Information
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div
+                      class="row g-3"
+                      *ngIf="profile.address; else noAddress"
+                    >
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <div
+                            class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                          >
+                            <i class="bi bi-signpost text-primary"></i>
+                          </div>
+                          <div>
+                            <small class="text-muted d-block">Street</small>
+                            <span class="fw-medium">{{
+                              profile.address.street || "N/A"
+                            }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <div
+                            class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                          >
+                            <i class="bi bi-building text-primary"></i>
+                          </div>
+                          <div>
+                            <small class="text-muted d-block"
+                              >City & State</small
+                            >
+                            <span class="fw-medium">
+                              {{
+                                profile.address.city || profile.address.state
+                                  ? (profile.address.city || "") +
+                                    (profile.address.city &&
+                                    profile.address.state
+                                      ? ", "
+                                      : "") +
+                                    (profile.address.state || "")
+                                  : "N/A"
+                              }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <div
+                            class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                          >
+                            <i class="bi bi-globe text-primary"></i>
+                          </div>
+                          <div>
+                            <small class="text-muted d-block">Country</small>
+                            <span class="fw-medium">{{
+                              profile.address.country || "N/A"
+                            }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <div
+                            class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                          >
+                            <i class="bi bi-upc text-primary"></i>
+                          </div>
+                          <div>
+                            <small class="text-muted d-block"
+                              >Postal Code</small
+                            >
+                            <span class="fw-medium">{{
+                              profile.address.postalCode || "N/A"
+                            }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <ng-template #noAddress>
+                      <div class="text-center py-3">
+                        <p class="text-muted mt-2 mb-0">
+                          Address information is not available
+                        </p>
+                      </div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
