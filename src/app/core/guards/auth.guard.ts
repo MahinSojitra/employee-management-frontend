@@ -21,6 +21,8 @@ import {
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate, CanActivateChild {
+  private lastVerifiedRoute?: string;
+
   constructor(
     private authService: AuthService,
     private tokenService: TokenService,
@@ -83,6 +85,55 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> {
-    return this.verifyAuth(childRoute);
+    // Check if we've already verified this route
+    if (this.lastVerifiedRoute === state.url) {
+      return of(true);
+    }
+
+    if (!this.tokenService.getAccessToken()) {
+      this.router.navigate(['/auth/signin']);
+      return of(false);
+    }
+
+    // Update last verified route
+    this.lastVerifiedRoute = state.url;
+
+    return this.authService.verifyToken().pipe(
+      take(1),
+      tap(response => {
+        if (response.user) {
+          this.tokenService.setUser(response.user);
+        }
+      }),
+      switchMap(response => {
+        if (!response.valid) {
+          return this.authService.refreshToken().pipe(
+            map(() => true),
+            catchError(() => {
+              this.tokenService.clearTokens();
+              this.router.navigate(['/auth/signin']);
+              return of(false);
+            })
+          );
+        }
+
+        // Role check
+        const requiredRoles = childRoute.data['roles'] as Array<string>;
+        if (requiredRoles && requiredRoles.length > 0) {
+          const user = this.tokenService.getUser();
+          if (!user || !user.roles.some(role => requiredRoles.includes(role))) {
+            this.router.navigate(['/unauthorized']);
+            return of(false);
+          }
+        }
+
+        return of(true);
+      }),
+      catchError(() => {
+        this.tokenService.clearTokens();
+        this.router.navigate(['/auth/signin']);
+        return of(false);
+      })
+    );
   }
 }
