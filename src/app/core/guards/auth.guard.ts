@@ -1,30 +1,58 @@
 import { Injectable } from '@angular/core';
-import { CanActivateChild, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {
+  CanActivateChild,
+  Router,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot
+} from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
 import { Observable, of } from 'rxjs';
-import { catchError, map, take, switchMap } from 'rxjs/operators';
+import {
+  catchError,
+  map,
+  switchMap,
+  take,
+  shareReplay
+} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivateChild {
+  private verifyToken$?: Observable<any>;
+
   constructor(
     private authService: AuthService,
     private tokenService: TokenService,
     private router: Router
-  ) { }
+  ) {
+    this.router.events.subscribe(event => {
+      // Reset cache on every navigation start
+      if (event.constructor.name === 'NavigationStart') {
+        this.verifyToken$ = undefined;
+      }
+    });
+  }
 
-  canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    // First check if we have a token
+  canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean> {
     if (!this.tokenService.getAccessToken()) {
       this.router.navigate(['/auth/signin']);
       return of(false);
     }
 
-    // Always verify token on route change
-    return this.authService.verifyToken().pipe(
-      take(1),
+    // Cache verifyToken call per route activation
+    if (!this.verifyToken$) {
+      this.verifyToken$ = this.authService.verifyToken().pipe(
+        take(1),
+        shareReplay(1)
+      );
+    }
+
+    return this.verifyToken$.pipe(
       switchMap(response => {
         if (!response.valid) {
           return this.authService.refreshToken().pipe(
@@ -41,7 +69,7 @@ export class AuthGuard implements CanActivateChild {
           this.tokenService.setUser(response.user);
         }
 
-        // Check roles if required
+        // Role check
         const requiredRoles = childRoute.data['roles'] as Array<string>;
         if (requiredRoles && requiredRoles.length > 0) {
           const user = this.tokenService.getUser();
