@@ -44,7 +44,7 @@ export class SigninComponent implements OnInit {
 
       // Simulate delay before actual request
       of(null).pipe(
-        delay(1000), // 1 second delay for spinner to be visible
+        delay(3000), // 1 second delay for spinner to be visible
         switchMap(() => this.authService.login(this.signinForm.value))
       ).subscribe({
         next: (response: LoginResponse) => {

@@ -1,0 +1,448 @@
+// Fade In Animation
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Fade In Left Animation
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Fade In Up Animation
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Animation Classes
+.animate__animated {
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+}
+
+.animate__fadeIn {
+  animation-name: fadeIn;
+}
+
+.animate__fadeInLeft {
+  animation-name: fadeInLeft;
+}
+
+.animate__fadeInUp {
+  animation-name: fadeInUp;
+}
+
+.animate__delay-1s {
+  animation-delay: 0.5s;
+}
+
+.animate__delay-2s {
+  animation-delay: 1s;
+}
+
+// Loading Overlay
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.loading-spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-width: 0.2rem;
+  margin-right: 0.75rem;
+}
+
+.loading-text {
+  font-size: 1.25rem;
+  margin: 0;
+  color: #198754;
+}
+
+.typing-dots::after {
+  content: "";
+  animation: typing 1.5s infinite;
+}
+
+@keyframes typing {
+  0% {
+    content: "";
+  }
+  25% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  75% {
+    content: "...";
+  }
+  100% {
+    content: "";
+  }
+}
+
+// Background Icons Pattern
+.signin-container {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.background-icons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.9;
+}
+
+.icon-pattern {
+  position: absolute;
+  font-size: 1.2rem;
+  color: #198754;
+  transform: rotate(var(--rotation));
+}
+
+// Random positions for icons with smaller gaps
+.icon-1 {
+  top: 2%;
+  left: 5%;
+  --rotation: 15deg;
+}
+.icon-2 {
+  top: 8%;
+  left: 15%;
+  --rotation: -10deg;
+}
+.icon-3 {
+  top: 4%;
+  left: 25%;
+  --rotation: 5deg;
+}
+.icon-4 {
+  top: 12%;
+  left: 35%;
+  --rotation: -15deg;
+}
+.icon-5 {
+  top: 6%;
+  left: 45%;
+  --rotation: 10deg;
+}
+.icon-6 {
+  top: 14%;
+  left: 55%;
+  --rotation: -5deg;
+}
+.icon-7 {
+  top: 3%;
+  left: 65%;
+  --rotation: 20deg;
+}
+.icon-8 {
+  top: 9%;
+  left: 75%;
+  --rotation: -20deg;
+}
+.icon-9 {
+  top: 7%;
+  left: 85%;
+  --rotation: 15deg;
+}
+.icon-10 {
+  top: 15%;
+  left: 10%;
+  --rotation: -15deg;
+}
+.icon-11 {
+  top: 11%;
+  left: 20%;
+  --rotation: 10deg;
+}
+.icon-12 {
+  top: 19%;
+  left: 30%;
+  --rotation: -10deg;
+}
+.icon-13 {
+  top: 13%;
+  left: 40%;
+  --rotation: 5deg;
+}
+.icon-14 {
+  top: 21%;
+  left: 50%;
+  --rotation: -20deg;
+}
+.icon-15 {
+  top: 17%;
+  left: 60%;
+  --rotation: 15deg;
+}
+.icon-16 {
+  top: 25%;
+  left: 70%;
+  --rotation: -5deg;
+}
+.icon-17 {
+  top: 23%;
+  left: 80%;
+  --rotation: 10deg;
+}
+.icon-18 {
+  top: 31%;
+  left: 90%;
+  --rotation: -15deg;
+}
+.icon-19 {
+  top: 27%;
+  left: 5%;
+  --rotation: 20deg;
+}
+.icon-20 {
+  top: 35%;
+  left: 15%;
+  --rotation: -10deg;
+}
+.icon-21 {
+  top: 29%;
+  left: 25%;
+  --rotation: 5deg;
+}
+.icon-22 {
+  top: 37%;
+  left: 35%;
+  --rotation: -15deg;
+}
+.icon-23 {
+  top: 33%;
+  left: 45%;
+  --rotation: 10deg;
+}
+.icon-24 {
+  top: 41%;
+  left: 55%;
+  --rotation: -20deg;
+}
+.icon-25 {
+  top: 39%;
+  left: 65%;
+  --rotation: 15deg;
+}
+.icon-26 {
+  top: 47%;
+  left: 75%;
+  --rotation: -5deg;
+}
+.icon-27 {
+  top: 43%;
+  left: 85%;
+  --rotation: 10deg;
+}
+.icon-28 {
+  top: 51%;
+  left: 10%;
+  --rotation: -15deg;
+}
+.icon-29 {
+  top: 49%;
+  left: 20%;
+  --rotation: 20deg;
+}
+.icon-30 {
+  top: 57%;
+  left: 30%;
+  --rotation: -10deg;
+}
+.icon-31 {
+  top: 53%;
+  left: 40%;
+  --rotation: 5deg;
+}
+.icon-32 {
+  top: 61%;
+  left: 50%;
+  --rotation: -20deg;
+}
+.icon-33 {
+  top: 59%;
+  left: 60%;
+  --rotation: 15deg;
+}
+.icon-34 {
+  top: 67%;
+  left: 70%;
+  --rotation: -5deg;
+}
+.icon-35 {
+  top: 63%;
+  left: 80%;
+  --rotation: 10deg;
+}
+.icon-36 {
+  top: 71%;
+  left: 90%;
+  --rotation: -15deg;
+}
+.icon-37 {
+  top: 69%;
+  left: 5%;
+  --rotation: 20deg;
+}
+.icon-38 {
+  top: 77%;
+  left: 15%;
+  --rotation: -10deg;
+}
+.icon-39 {
+  top: 73%;
+  left: 25%;
+  --rotation: 5deg;
+}
+.icon-40 {
+  top: 81%;
+  left: 35%;
+  --rotation: -15deg;
+}
+.icon-41 {
+  top: 79%;
+  left: 45%;
+  --rotation: 10deg;
+}
+.icon-42 {
+  top: 87%;
+  left: 55%;
+  --rotation: -20deg;
+}
+.icon-43 {
+  top: 85%;
+  left: 65%;
+  --rotation: 15deg;
+}
+.icon-44 {
+  top: 93%;
+  left: 75%;
+  --rotation: -5deg;
+}
+.icon-45 {
+  top: 89%;
+  left: 85%;
+  --rotation: 10deg;
+}
+.icon-46 {
+  top: 97%;
+  left: 10%;
+  --rotation: -15deg;
+}
+.icon-47 {
+  top: 95%;
+  left: 20%;
+  --rotation: 20deg;
+}
+.icon-48 {
+  top: 1%;
+  left: 30%;
+  --rotation: -10deg;
+}
+.icon-49 {
+  top: 5%;
+  left: 40%;
+  --rotation: 5deg;
+}
+.icon-50 {
+  top: 10%;
+  left: 50%;
+  --rotation: -20deg;
+}
+.icon-51 {
+  top: 15%;
+  left: 60%;
+  --rotation: 15deg;
+}
+.icon-52 {
+  top: 20%;
+  left: 70%;
+  --rotation: -5deg;
+}
+.icon-53 {
+  top: 25%;
+  left: 80%;
+  --rotation: 10deg;
+}
+.icon-54 {
+  top: 30%;
+  left: 90%;
+  --rotation: -15deg;
+}
+.icon-55 {
+  top: 35%;
+  left: 5%;
+  --rotation: 20deg;
+}
+.icon-56 {
+  top: 40%;
+  left: 15%;
+  --rotation: -10deg;
+}
+.icon-57 {
+  top: 45%;
+  left: 25%;
+  --rotation: 5deg;
+}
+.icon-58 {
+  top: 50%;
+  left: 35%;
+  --rotation: -15deg;
+}
+.icon-59 {
+  top: 55%;
+  left: 45%;
+  --rotation: 10deg;
+}
+.icon-60 {
+  top: 60%;
+  left: 55%;
+  --rotation: -20deg;
+}
+
+// Ensure the card stays above the background
+.card {
+  position: relative;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}

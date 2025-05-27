@@ -1,0 +1,6 @@
+{
+  "input": "ems.json",
+  "output": "src/app/api",
+  "ignoreUnusedModels": false,
+  "useHttpClientLegacyUrls": false
+}

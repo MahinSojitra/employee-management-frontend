@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../../services/account.service';
-import { Profile } from '../../../../core/models/profile.model';
+import { Profile } from '../../models/profile.model';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -30,6 +30,7 @@ export class AccountComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success) {
+            console.log(response.data);
             this.profile = response.data;
           } else {
             this.error = 'Failed to load profile data';

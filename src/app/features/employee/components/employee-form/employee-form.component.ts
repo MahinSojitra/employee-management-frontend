@@ -1,11 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeService } from '../../services/employee.service';
 import { DepartmentService } from '../../../department/services/department.service';
 import { PositionService } from '../../../position/services/position.service';
 import { Department } from '../../../department/models/department.model';
 import { Position } from '../../../position/models/position.model';
+
+// Custom validator to prevent future dates
+function pastDateValidator(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const forbidden = new Date(control.value).getTime() > Date.now();
+    return forbidden ? { futureDate: { value: control.value } } : null;
+  };
+}
 
 @Component({
   selector: 'app-employee-form',
@@ -34,8 +42,8 @@ export class EmployeeFormComponent implements OnInit {
       userName: ['', [Validators.required, Validators.minLength(3)]],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      dateOfBirth: ['', Validators.required],
-      hireDate: ['', Validators.required],
+      dateOfBirth: ['', [Validators.required, pastDateValidator()]],
+      hireDate: ['', [Validators.required, pastDateValidator()]],
       employeeType: [1, Validators.required],
       departmentId: ['', Validators.required],
       positionId: ['', Validators.required],
@@ -44,7 +52,7 @@ export class EmployeeFormComponent implements OnInit {
         city: ['', Validators.required],
         state: ['', Validators.required],
         country: ['', Validators.required],
-        zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,6}$')]]
+        zipCode: ['', [Validators.required, Validators.pattern('^\\d{6}$')]]
       })
     });
   }
@@ -162,8 +170,14 @@ export class EmployeeFormComponent implements OnInit {
     if (control.hasError('minlength')) {
       return `Minimum length is ${control.errors?.['minlength'].requiredLength} characters`;
     }
-    if (control.hasError('pattern')) {
-      return 'Please enter a valid postal code';
+    if (control.hasError('maxlength')) {
+      return `Maximum length is ${control.errors?.['maxlength'].requiredLength} characters`;
+    }
+    if (control.hasError('pattern') && controlName === 'address.zipCode') {
+      return 'Please enter a valid postal code.';
+    }
+    if (control.hasError('futureDate')) {
+      return 'This date cannot be in the future.';
     }
     return '';
   }

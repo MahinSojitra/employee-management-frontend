@@ -5,21 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DepartmentListComponent } from './components/department-list/department-list.component';
 import { DepartmentFormComponent } from './components/department-form/department-form.component';
 import { DepartmentService } from './services/department.service';
-
-const routes: Routes = [
-  {
-    path: '',
-    component: DepartmentListComponent
-  },
-  {
-    path: 'create',
-    component: DepartmentFormComponent
-  },
-  {
-    path: 'edit/:id',
-    component: DepartmentFormComponent
-  }
-];
+import { DepartmentRoutingModule } from './department-routing.module';
 
 @NgModule({
   declarations: [
@@ -29,7 +15,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule.forChild(routes)
+    DepartmentRoutingModule
   ],
   providers: [
     DepartmentService

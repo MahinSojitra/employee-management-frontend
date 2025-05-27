@@ -21,8 +21,13 @@ const routes: Routes = [
   {
     path: '',
     component: MainLayoutComponent,
-    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
+      {
+        path: '',
+        loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule),
+        data: { roles: ['Admin', 'Employee'] }
+      },
       {
         path: 'employees',
         loadChildren: () => import('./features/employee/employee.module').then(m => m.EmployeeModule),
@@ -44,10 +49,10 @@ const routes: Routes = [
         data: { roles: ['Admin', 'Employee'] }
       },
       {
-        path: '',
-        redirectTo: 'account',
-        pathMatch: 'full'
-      }
+        path: 'leaves',
+        loadChildren: () => import('./features/leave/leave.module').then(m => m.LeaveModule),
+        data: { roles: ['Admin', 'Employee'] }
+      },
     ]
   }
 ];

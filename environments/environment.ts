@@ -1,5 +1,5 @@
 export const environment = {
-    apiBaseUrl: 'https://localhost:44370/api',
+    apiBaseUrl: 'https://ems-backend-api.azurewebsites.net/api',
     signInUrl: '/auth/signin',
     signOutUrl: '/auth/signout',
     refreshTokenUrl: '/auth/refresh-token',

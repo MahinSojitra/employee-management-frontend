@@ -1,0 +1,135 @@
+<div class="container mt-5">
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <div class="row">
+    <!-- Leave Application Form -->
+    <div class="col-lg-5 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header text-black">
+          <h5 class="card-title mb-0 py-1">
+            <i class="bi bi-calendar-plus me-2"></i>Apply for Leave
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="leaveForm" (submit)="applyForLeave()">
+            <div class="mb-3">
+              <label for="startDate" class="form-label">Start Date</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                <input type="date" id="startDate" formControlName="startDate" class="form-control" [ngClass]="{
+                    'is-invalid':
+                      leaveForm.get('startDate')?.invalid &&
+                      leaveForm.get('startDate')?.touched
+                  }" />
+              </div>
+              <div *ngIf="
+                  leaveForm.get('startDate')?.invalid &&
+                  leaveForm.get('startDate')?.touched
+                " class="text-danger mt-1">
+                {{ getErrorMessage("startDate") }}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="endDate" class="form-label">End Date</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                <input type="date" id="endDate" formControlName="endDate" class="form-control" [ngClass]="{
+                    'is-invalid':
+                      leaveForm.get('endDate')?.invalid &&
+                      leaveForm.get('endDate')?.touched
+                  }" />
+              </div>
+              <div *ngIf="
+                (leaveForm.get('endDate')?.touched || leaveForm.get('startDate')?.touched) &&
+                (leaveForm.get('endDate')?.invalid || leaveForm.errors?.['invalidDateRange'])
+              " class="text-danger mt-1">
+                {{ getErrorMessage('endDate') }}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="reason" class="form-label">Reason</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
+                <textarea id="reason" formControlName="reason" class="form-control" rows="3"></textarea>
+              </div>
+              <div *ngIf="
+                  leaveForm.get('reason')?.invalid &&
+                  leaveForm.get('reason')?.touched
+                " class="text-danger mt-1">
+                Reason is required.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" [disabled]="leaveForm.invalid || isSubmitting">
+              <i *ngIf="!isSubmitting" class="bi bi-send me-2"></i>
+              <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"
+                aria-hidden="true"></span>
+              {{ isSubmitting ? 'Submitting Leave...' : 'Submit Leave' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leave History -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-clock-history me-2"></i>Leave History
+          </h5>
+        </div>
+        <div class="card-body">
+
+          <div *ngIf="loadingLeaves" class="text-center">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span class="ms-2">Loading...</span>
+          </div>
+
+          <div *ngIf="employeeLeaves.length > 0" class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Date Range</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let leave of employeeLeaves">
+                  <td>
+                    <div class="d-flex flex-column">
+                      <small class="text-muted">From:</small>
+                      {{ leave.startDate | date : "mediumDate" }}
+                      <small class="text-muted">To:</small>
+                      {{ leave.endDate | date : "mediumDate" }}
+                    </div>
+                  </td>
+                  <td>{{ leave.reason }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="{
+                        'bg-secondary': leave.status === 'Pending',
+                        'bg-success': leave.status === 'Approved',
+                        'bg-danger': leave.status === 'Rejected'
+                      }">
+                      {{ leave.status }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="employeeLeaves.length === 0 && !loadingLeaves" class="text-center py-4">
+            <i class="bi bi-inbox text-muted fs-1"></i>
+            <p class="text-muted mt-0">No leave history found.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

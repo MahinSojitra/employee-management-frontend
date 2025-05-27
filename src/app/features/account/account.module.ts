@@ -3,13 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { AccountComponent } from './components/account/account.component';
 import { AccountService } from './services/account.service';
-
-const routes: Routes = [
-  {
-    path: '',
-    component: AccountComponent
-  }
-];
+import { AccountRoutingModule } from './account-routing.module';
 
 @NgModule({
   declarations: [
@@ -17,7 +11,7 @@ const routes: Routes = [
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes)
+    AccountRoutingModule
   ],
   providers: [
     AccountService

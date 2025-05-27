@@ -1,3 +1,5 @@
+import { Address } from "../../account/models/profile.model";
+
 export enum EmployeeType {
   FullTime = 0,
   PartTime = 1,
@@ -19,16 +21,6 @@ export interface Employee {
   departmentName: string;
   positionTitle: string;
   address: Address | null;
-}
-
-export interface Address {
-  id: string;
-  street: string;
-  city: string;
-  state: string;
-  country: string;
-  zipCode: string;
-  employeeId: string;
 }
 
 export interface EmployeeResponse {
@@ -53,11 +45,5 @@ export interface EmployeeFormData {
   employeeType: EmployeeType;
   departmentId: string;
   positionId: string;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    country: string;
-    zipCode: string;
-  } | null;
+  address: Address | null;
 }

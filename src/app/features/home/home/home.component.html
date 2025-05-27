@@ -1,0 +1,100 @@
+<div class="container mt-5">
+  <span class="text-muted mb-0 fw-medium">
+    <i class="bi bi-person-badge-fill me-1"></i>
+    Employee Management System
+  </span>
+  <h1 class="mt-0">
+    Welcome{{ currentUser ? ", " + currentUser.firstName : "" }}
+  </h1>
+</div>
+
+<div class="container mt-5">
+  <div class="row g-4">
+    <!-- Admin Links -->
+    <ng-container *ngIf="hasRole('Admin')">
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-people me-2"></i>Employees
+            </h5>
+            <p class="card-text">Manage employee information and records</p>
+            <a routerLink="/employees" class="link-success text-decoration-none d-inline-flex align-items-center">
+              Manage Employees
+              <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-building me-2"></i>Departments
+            </h5>
+            <p class="card-text">Manage department structure and assignments</p>
+            <a routerLink="/departments" class="link-success text-decoration-none d-inline-flex align-items-center">
+              Manage Departments
+              <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-briefcase me-2"></i>Positions
+            </h5>
+            <p class="card-text">Manage job positions and roles</p>
+            <a routerLink="/positions" class="link-success text-decoration-none d-inline-flex align-items-center">
+              Manage Positions
+              <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Common Links -->
+    <ng-container *ngIf="isLoggedIn">
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-calendar-check me-2"></i>Leave Management
+            </h5>
+            <p class="card-text">
+              <ng-container *ngIf="hasRole('Admin')">Manage employee leave requests</ng-container>
+              <ng-container *ngIf="!hasRole('Admin')">View and request leaves</ng-container>
+            </p>
+            <a [routerLink]="
+                hasRole('Admin')
+                  ? '/leaves/leave-requests'
+                  : '/leaves/my-leaves'
+              " class="link-success text-decoration-none d-inline-flex align-items-center">
+              <ng-container *ngIf="hasRole('Admin')">Manage Leaves</ng-container>
+              <ng-container *ngIf="!hasRole('Admin')">My Leaves</ng-container>
+              <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-person me-2"></i>Account</h5>
+            <p class="card-text">Manage your account settings and profile</p>
+            <a routerLink="/account" class="link-success text-decoration-none d-inline-flex align-items-center">
+              View Account
+              <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

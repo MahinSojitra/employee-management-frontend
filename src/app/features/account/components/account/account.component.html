@@ -1,4 +1,4 @@
-<div class="container py-4">
+<div class="container pt-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card shadow-sm">
@@ -22,15 +22,13 @@
             <!-- Profile Header with Avatar -->
             <div class="text-center mb-4">
               <div class="d-inline-block position-relative mb-3">
-                <div
-                  class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
                   style="
                     width: 120px;
                     height: 120px;
                     font-size: 2.5rem;
                     font-weight: 500;
-                  "
-                >
+                  ">
                   {{ profile.firstName.charAt(0) || "?"
                   }}{{ profile.lastName.charAt(0) || "?" }}
                 </div>
@@ -60,34 +58,27 @@
                   </div>
                   <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
-                      <div
-                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
-                      >
+                      <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                         <i class="bi bi-envelope text-primary"></i>
                       </div>
                       <div>
                         <small class="text-muted d-block">Email</small>
                         <span class="fw-medium">{{
                           profile.email || "N/A"
-                        }}</span>
+                          }}</span>
                       </div>
                     </div>
-                    <div
-                      class="d-flex align-items-center"
-                      *ngIf="profile.dateOfBirth"
-                    >
-                      <div
-                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
-                      >
+                    <div class="d-flex align-items-center" *ngIf="profile.dateOfBirth">
+                      <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                         <i class="bi bi-calendar-heart text-primary"></i>
                       </div>
                       <div>
                         <small class="text-muted d-block">Date of Birth</small>
                         <span class="fw-medium">{{
                           profile.dateOfBirth
-                            ? (profile.dateOfBirth | date)
-                            : "N/A"
-                        }}</span>
+                          ? (profile.dateOfBirth | date)
+                          : "N/A"
+                          }}</span>
                       </div>
                     </div>
                   </div>
@@ -103,45 +94,36 @@
                   </div>
                   <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
-                      <div
-                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
-                      >
+                      <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                         <i class="bi bi-person-badge text-primary"></i>
                       </div>
                       <div>
                         <small class="text-muted d-block">Employee Type</small>
                         <span class="fw-medium">{{
                           profile.employeeType || "N/A"
-                        }}</span>
+                          }}</span>
                       </div>
                     </div>
                     <div class="d-flex align-items-center mb-3">
-                      <div
-                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
-                      >
+                      <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                         <i class="bi bi-diagram-3 text-primary"></i>
                       </div>
                       <div>
                         <small class="text-muted d-block">Department</small>
                         <span class="fw-medium">{{
                           profile.departmentName || "N/A"
-                        }}</span>
+                          }}</span>
                       </div>
                     </div>
-                    <div
-                      class="d-flex align-items-center"
-                      *ngIf="profile.hireDate"
-                    >
-                      <div
-                        class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
-                      >
+                    <div class="d-flex align-items-center" *ngIf="profile.hireDate">
+                      <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                         <i class="bi bi-calendar-check text-primary"></i>
                       </div>
                       <div>
                         <small class="text-muted d-block">Hire Date</small>
                         <span class="fw-medium">{{
                           profile.hireDate ? (profile.hireDate | date) : "N/A"
-                        }}</span>
+                          }}</span>
                       </div>
                     </div>
                   </div>
@@ -159,46 +141,37 @@
                     </h5>
                   </div>
                   <div class="card-body">
-                    <div
-                      class="row g-3"
-                      *ngIf="profile.address; else noAddress"
-                    >
+                    <div class="row g-3" *ngIf="profile.address; else noAddress">
                       <div class="col-md-6">
                         <div class="d-flex align-items-center">
-                          <div
-                            class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
-                          >
+                          <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                             <i class="bi bi-signpost text-primary"></i>
                           </div>
                           <div>
                             <small class="text-muted d-block">Street</small>
                             <span class="fw-medium">{{
                               profile.address.street || "N/A"
-                            }}</span>
+                              }}</span>
                           </div>
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="d-flex align-items-center">
-                          <div
-                            class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
-                          >
+                          <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                             <i class="bi bi-building text-primary"></i>
                           </div>
                           <div>
-                            <small class="text-muted d-block"
-                              >City & State</small
-                            >
+                            <small class="text-muted d-block">City & State</small>
                             <span class="fw-medium">
                               {{
-                                profile.address.city || profile.address.state
-                                  ? (profile.address.city || "") +
-                                    (profile.address.city &&
-                                    profile.address.state
-                                      ? ", "
-                                      : "") +
-                                    (profile.address.state || "")
-                                  : "N/A"
+                              profile.address.city || profile.address.state
+                              ? (profile.address.city || "") +
+                              (profile.address.city &&
+                              profile.address.state
+                              ? ", "
+                              : "") +
+                              (profile.address.state || "")
+                              : "N/A"
                               }}
                             </span>
                           </div>
@@ -206,33 +179,27 @@
                       </div>
                       <div class="col-md-6">
                         <div class="d-flex align-items-center">
-                          <div
-                            class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
-                          >
+                          <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                             <i class="bi bi-globe text-primary"></i>
                           </div>
                           <div>
                             <small class="text-muted d-block">Country</small>
                             <span class="fw-medium">{{
                               profile.address.country || "N/A"
-                            }}</span>
+                              }}</span>
                           </div>
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="d-flex align-items-center">
-                          <div
-                            class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
-                          >
+                          <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                             <i class="bi bi-upc text-primary"></i>
                           </div>
                           <div>
-                            <small class="text-muted d-block"
-                              >Postal Code</small
-                            >
+                            <small class="text-muted d-block">Postal Code</small>
                             <span class="fw-medium">{{
-                              profile.address.postalCode || "N/A"
-                            }}</span>
+                              profile.address.zipCode || "N/A"
+                              }}</span>
                           </div>
                         </div>
                       </div>
