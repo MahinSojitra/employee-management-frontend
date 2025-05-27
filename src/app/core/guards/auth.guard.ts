@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {
+  CanActivate,
   CanActivateChild,
   Router,
   ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  NavigationStart
+  RouterStateSnapshot
 } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
@@ -20,23 +20,19 @@ import {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivateChild {
+export class AuthGuard implements CanActivate, CanActivateChild {
   constructor(
     private authService: AuthService,
     private tokenService: TokenService,
     private router: Router
   ) {}
 
-  canActivateChild(
-    childRoute: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> {
+  private verifyAuth(route: ActivatedRouteSnapshot): Observable<boolean> {
     if (!this.tokenService.getAccessToken()) {
       this.router.navigate(['/auth/signin']);
       return of(false);
     }
 
-    // Always verify token on route change
     return this.authService.verifyToken().pipe(
       take(1),
       tap(response => {
@@ -57,7 +53,7 @@ export class AuthGuard implements CanActivateChild {
         }
 
         // Role check
-        const requiredRoles = childRoute.data['roles'] as Array<string>;
+        const requiredRoles = route.data['roles'] as Array<string>;
         if (requiredRoles && requiredRoles.length > 0) {
           const user = this.tokenService.getUser();
           if (!user || !user.roles.some(role => requiredRoles.includes(role))) {
@@ -74,5 +70,19 @@ export class AuthGuard implements CanActivateChild {
         return of(false);
       })
     );
+  }
+
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean> {
+    return this.verifyAuth(route);
+  }
+
+  canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean> {
+    return this.verifyAuth(childRoute);
   }
 }
