@@ -2,21 +2,55 @@ import { Injectable } from '@angular/core';
 import { CanActivateChild, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
-import { Observable, of, Subject } from 'rxjs';
-import { catchError, map, take, switchMap, debounceTime, takeUntil } from 'rxjs/operators';
+import { Observable, of, Subject, BehaviorSubject, timer } from 'rxjs';
+import { catchError, map, switchMap, take, shareReplay, filter, takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivateChild {
-  private cancelVerification = new Subject<void>();
-  private isVerifying = false;
+  private verificationStream$: Observable<boolean>;
+  private lastVerificationTime = 0;
+  private readonly VERIFICATION_INTERVAL = 30000; // 30 seconds
 
   constructor(
     private authService: AuthService,
     private tokenService: TokenService,
     private router: Router
-  ) { }
+  ) {
+    // Create a shared verification stream
+    this.verificationStream$ = new BehaviorSubject<void>(undefined).pipe(
+      switchMap(() => {
+        const now = Date.now();
+        if (now - this.lastVerificationTime < this.VERIFICATION_INTERVAL) {
+          return of(true);
+        }
+        return this.authService.verifyToken().pipe(
+          map(response => {
+            this.lastVerificationTime = now;
+            if (response.user) {
+              this.tokenService.setUser(response.user);
+            }
+            return response.valid;
+          }),
+          catchError(() => {
+            return this.authService.refreshToken().pipe(
+              map(() => {
+                this.lastVerificationTime = now;
+                return true;
+              }),
+              catchError(() => {
+                this.tokenService.clearTokens();
+                this.router.navigate(['/auth/signin']);
+                return of(false);
+              })
+            );
+          })
+        );
+      }),
+      shareReplay(1)
+    );
+  }
 
   canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     if (!this.tokenService.getAccessToken()) {
@@ -24,32 +58,11 @@ export class AuthGuard implements CanActivateChild {
       return of(false);
     }
 
-    // If already verifying, cancel the previous verification
-    if (this.isVerifying) {
-      this.cancelVerification.next();
-    }
-
-    this.isVerifying = true;
-
-    return this.authService.verifyToken().pipe(
-      takeUntil(this.cancelVerification),
-      debounceTime(500),
+    return this.verificationStream$.pipe(
       take(1),
-      switchMap(response => {
-        this.isVerifying = false;
-        if (!response.valid) {
-          return this.authService.refreshToken().pipe(
-            map(() => true),
-            catchError(() => {
-              this.tokenService.clearTokens();
-              this.router.navigate(['/auth/signin']);
-              return of(false);
-            })
-          );
-        }
-
-        if (response.user) {
-          this.tokenService.setUser(response.user);
+      switchMap(isValid => {
+        if (!isValid) {
+          return of(false);
         }
 
         const requiredRoles = childRoute.data['roles'] as Array<string>;
@@ -65,12 +78,6 @@ export class AuthGuard implements CanActivateChild {
         }
 
         return of(true);
-      }),
-      catchError(() => {
-        this.isVerifying = false;
-        this.tokenService.clearTokens();
-        this.router.navigate(['/auth/signin']);
-        return of(false);
       })
     );
   }
