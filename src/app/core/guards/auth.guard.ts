@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import { CanActivateChild, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
-import { Observable, of } from 'rxjs';
-import { catchError, map, take, switchMap } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, map, take, switchMap, debounceTime } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivateChild {
+  private cachedVerificationResult: boolean | null = null;
+  private cancelVerification = new Subject<void>();
+
   constructor(
     private authService: AuthService,
     private tokenService: TokenService,
@@ -21,12 +24,22 @@ export class AuthGuard implements CanActivateChild {
       return of(false);
     }
 
+    if (this.cachedVerificationResult !== null) {
+      return of(this.cachedVerificationResult);
+    }
+
+    this.cancelVerification.next(); // Cancel any ongoing verification
+
     return this.authService.verifyToken().pipe(
+      debounceTime(1000),
       take(1),
       switchMap(response => {
         if (!response.valid) {
           return this.authService.refreshToken().pipe(
-            map(() => true),
+            map(() => {
+              this.cachedVerificationResult = true;
+              return true;
+            }),
             catchError(() => {
               this.tokenService.clearTokens();
               this.router.navigate(['/auth/signin']);
@@ -43,6 +56,7 @@ export class AuthGuard implements CanActivateChild {
         const user = this.tokenService.getUser();
 
         if (!requiredRoles || requiredRoles.length === 0) {
+          this.cachedVerificationResult = true;
           return of(true);
         }
 
@@ -51,6 +65,7 @@ export class AuthGuard implements CanActivateChild {
           return of(false);
         }
 
+        this.cachedVerificationResult = true;
         return of(true);
       }),
       catchError(() => {

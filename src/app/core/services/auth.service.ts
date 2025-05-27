@@ -77,15 +77,23 @@ export class AuthService {
       return throwError(() => new Error('No refresh token available'));
     }
 
-    return this.http.post<TokenResponse>(`${this.apiUrl}${this.refreshTokenUrl}`, { refreshToken })
-      .pipe(
-        tap(response => {
-          this.tokenService.setTokens(response.accessToken, response.refreshToken);
-        }),
-        catchError(error => {
-          this.tokenService.clearTokens();
-          this.authStatusSubject.next(false);
-          return throwError(() => error);
+    return this.http.post<TokenResponse>(
+      `${this.apiUrl}${this.refreshTokenUrl}`,
+      {}, // empty body
+      {
+        headers: {
+          'X-Refresh-Token': refreshToken
+        }
+      }
+    )
+    .pipe(
+      tap(response => {
+        this.tokenService.setTokens(response.accessToken, response.refreshToken);
+      }),
+      catchError(error => {
+        this.tokenService.clearTokens();
+        this.authStatusSubject.next(false);
+        return throwError(() => error);
       })
     );
   }
