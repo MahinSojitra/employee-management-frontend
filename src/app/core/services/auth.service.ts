@@ -86,14 +86,14 @@ export class AuthService {
         }
       }
     )
-    .pipe(
-      tap(response => {
-        this.tokenService.setTokens(response.accessToken, response.refreshToken);
-      }),
-      catchError(error => {
-        this.tokenService.clearTokens();
-        this.authStatusSubject.next(false);
-        return throwError(() => error);
+      .pipe(
+        tap(response => {
+          this.tokenService.setTokens(response.accessToken, response.refreshToken);
+        }),
+        catchError(error => {
+          this.tokenService.clearTokens();
+          this.authStatusSubject.next(false);
+          return throwError(() => error);
       })
     );
   }

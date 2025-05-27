@@ -5,23 +5,21 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { UnauthorizedComponent } from './core/components/unauthorized/unauthorized.component';
 
 const routes: Routes = [
-  // Auth Routes (standalone pages)
+  // Public Routes
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
-
-  // Unauthorized page
   {
     path: 'unauthorized',
     component: UnauthorizedComponent
   },
 
-  // Protected Routes (with main layout)
+  // Protected Routes
   {
     path: '',
     component: MainLayoutComponent,
-    canActivateChild: [AuthGuard],
+    canActivate: [AuthGuard],
     children: [
       {
         path: '',
@@ -52,9 +50,11 @@ const routes: Routes = [
         path: 'leaves',
         loadChildren: () => import('./features/leave/leave.module').then(m => m.LeaveModule),
         data: { roles: ['Admin', 'Employee'] }
-      },
+      }
     ]
-  }
+  },
+  // Redirect to home if no route matches
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
