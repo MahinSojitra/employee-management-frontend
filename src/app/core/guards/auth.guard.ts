@@ -3,15 +3,14 @@ import { CanActivateChild, Router, ActivatedRouteSnapshot, RouterStateSnapshot }
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { catchError, map, switchMap, take, shareReplay } from 'rxjs/operators';
+import { catchError, map, switchMap, take, shareReplay, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivateChild {
-  private verificationTrigger$ = new BehaviorSubject<void>(undefined);
   private lastVerificationTime = 0;
-  private readonly VERIFICATION_INTERVAL = 60000;
+  private readonly VERIFICATION_INTERVAL = 60000; // 60 seconds
   private verificationStream$: Observable<boolean>;
 
   constructor(
@@ -20,15 +19,22 @@ export class AuthGuard implements CanActivateChild {
     private router: Router
   ) {
     // Create a shared verification stream
-    this.verificationStream$ = this.verificationTrigger$.pipe(
+    this.verificationStream$ = new BehaviorSubject<void>(undefined).pipe(
       switchMap(() => {
         const now = Date.now();
-        if (now - this.lastVerificationTime < this.VERIFICATION_INTERVAL && this.lastVerificationTime !== 0) {
+        const timeSinceLastVerification = now - this.lastVerificationTime;
+
+        // If we've verified recently, return the cached result
+        if (this.lastVerificationTime !== 0 && timeSinceLastVerification < this.VERIFICATION_INTERVAL) {
           return of(true);
         }
+
+        // Perform new verification
         return this.authService.verifyToken().pipe(
-          map(response => {
+          tap(() => {
             this.lastVerificationTime = now;
+          }),
+          map(response => {
             if (response.user) {
               this.tokenService.setUser(response.user);
             }
@@ -36,10 +42,10 @@ export class AuthGuard implements CanActivateChild {
           }),
           catchError(() => {
             return this.authService.refreshToken().pipe(
-              map(() => {
+              tap(() => {
                 this.lastVerificationTime = now;
-                return true;
               }),
+              map(() => true),
               catchError(() => {
                 this.tokenService.clearTokens();
                 this.router.navigate(['/auth/signin']);
@@ -59,8 +65,11 @@ export class AuthGuard implements CanActivateChild {
       return of(false);
     }
 
-    // Trigger verification check on route change
-    this.verificationTrigger$.next();
+    // Force a new verification if needed
+    const now = Date.now();
+    if (now - this.lastVerificationTime >= this.VERIFICATION_INTERVAL || this.lastVerificationTime === 0) {
+      (this.verificationStream$ as BehaviorSubject<void>).next();
+    }
 
     return this.verificationStream$.pipe(
       take(1),
