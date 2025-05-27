@@ -3,7 +3,8 @@ import {
   CanActivateChild,
   Router,
   ActivatedRouteSnapshot,
-  RouterStateSnapshot
+  RouterStateSnapshot,
+  NavigationStart
 } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
@@ -13,27 +14,18 @@ import {
   map,
   switchMap,
   take,
-  shareReplay
+  tap
 } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivateChild {
-  private verifyToken$?: Observable<any>;
-
   constructor(
     private authService: AuthService,
     private tokenService: TokenService,
     private router: Router
-  ) {
-    this.router.events.subscribe(event => {
-      // Reset cache on every navigation start
-      if (event.constructor.name === 'NavigationStart') {
-        this.verifyToken$ = undefined;
-      }
-    });
-  }
+  ) {}
 
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
@@ -44,15 +36,14 @@ export class AuthGuard implements CanActivateChild {
       return of(false);
     }
 
-    // Cache verifyToken call per route activation
-    if (!this.verifyToken$) {
-      this.verifyToken$ = this.authService.verifyToken().pipe(
-        take(1),
-        shareReplay(1)
-      );
-    }
-
-    return this.verifyToken$.pipe(
+    // Always verify token on route change
+    return this.authService.verifyToken().pipe(
+      take(1),
+      tap(response => {
+        if (response.user) {
+          this.tokenService.setUser(response.user);
+        }
+      }),
       switchMap(response => {
         if (!response.valid) {
           return this.authService.refreshToken().pipe(
@@ -63,10 +54,6 @@ export class AuthGuard implements CanActivateChild {
               return of(false);
             })
           );
-        }
-
-        if (response.user) {
-          this.tokenService.setUser(response.user);
         }
 
         // Role check
