@@ -2,16 +2,17 @@ import { Injectable } from '@angular/core';
 import { CanActivateChild, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
-import { Observable, of, Subject, BehaviorSubject, timer } from 'rxjs';
-import { catchError, map, switchMap, take, shareReplay, filter, takeUntil } from 'rxjs/operators';
+import { Observable, of, BehaviorSubject } from 'rxjs';
+import { catchError, map, switchMap, take, shareReplay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivateChild {
-  private verificationStream$: Observable<boolean>;
+  private verificationTrigger$ = new BehaviorSubject<void>(undefined);
   private lastVerificationTime = 0;
-  private readonly VERIFICATION_INTERVAL = 30000; // 30 seconds
+  private readonly VERIFICATION_INTERVAL = 60000;
+  private verificationStream$: Observable<boolean>;
 
   constructor(
     private authService: AuthService,
@@ -19,10 +20,10 @@ export class AuthGuard implements CanActivateChild {
     private router: Router
   ) {
     // Create a shared verification stream
-    this.verificationStream$ = new BehaviorSubject<void>(undefined).pipe(
+    this.verificationStream$ = this.verificationTrigger$.pipe(
       switchMap(() => {
         const now = Date.now();
-        if (now - this.lastVerificationTime < this.VERIFICATION_INTERVAL) {
+        if (now - this.lastVerificationTime < this.VERIFICATION_INTERVAL && this.lastVerificationTime !== 0) {
           return of(true);
         }
         return this.authService.verifyToken().pipe(
@@ -57,6 +58,9 @@ export class AuthGuard implements CanActivateChild {
       this.router.navigate(['/auth/signin']);
       return of(false);
     }
+
+    // Trigger verification check on route change
+    this.verificationTrigger$.next();
 
     return this.verificationStream$.pipe(
       take(1),
