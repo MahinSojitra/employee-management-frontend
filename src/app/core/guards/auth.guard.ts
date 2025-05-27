@@ -3,13 +3,14 @@ import { CanActivateChild, Router, ActivatedRouteSnapshot, RouterStateSnapshot }
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
 import { Observable, of, Subject } from 'rxjs';
-import { catchError, map, take, switchMap, debounceTime } from 'rxjs/operators';
+import { catchError, map, take, switchMap, debounceTime, takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivateChild {
   private cancelVerification = new Subject<void>();
+  private isVerifying = false;
 
   constructor(
     private authService: AuthService,
@@ -23,12 +24,19 @@ export class AuthGuard implements CanActivateChild {
       return of(false);
     }
 
-    this.cancelVerification.next(); // Cancel any ongoing verification
+    // If already verifying, cancel the previous verification
+    if (this.isVerifying) {
+      this.cancelVerification.next();
+    }
+
+    this.isVerifying = true;
 
     return this.authService.verifyToken().pipe(
-      debounceTime(1000),
+      takeUntil(this.cancelVerification),
+      debounceTime(500),
       take(1),
       switchMap(response => {
+        this.isVerifying = false;
         if (!response.valid) {
           return this.authService.refreshToken().pipe(
             map(() => true),
@@ -59,6 +67,7 @@ export class AuthGuard implements CanActivateChild {
         return of(true);
       }),
       catchError(() => {
+        this.isVerifying = false;
         this.tokenService.clearTokens();
         this.router.navigate(['/auth/signin']);
         return of(false);
