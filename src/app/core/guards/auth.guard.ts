@@ -35,21 +35,35 @@ export class AuthGuard implements CanActivateChild {
           tap(() => {
             this.lastVerificationTime = now;
           }),
-          map(response => {
+          switchMap(response => {
+            if (!response.valid) {
+              // If token is invalid, try to refresh
+              return this.authService.refreshToken().pipe(
+                tap(() => {
+                  this.lastVerificationTime = now;
+                }),
+                map(() => true),
+                catchError(() => {
+                  this.handleInvalidToken();
+                  return of(false);
+                })
+              );
+            }
+
             if (response.user) {
               this.tokenService.setUser(response.user);
             }
-            return response.valid;
+            return of(true);
           }),
           catchError(() => {
+            // If verification fails, try to refresh token
             return this.authService.refreshToken().pipe(
               tap(() => {
                 this.lastVerificationTime = now;
               }),
               map(() => true),
               catchError(() => {
-                this.tokenService.clearTokens();
-                this.router.navigate(['/auth/signin']);
+                this.handleInvalidToken();
                 return of(false);
               })
             );
@@ -60,9 +74,15 @@ export class AuthGuard implements CanActivateChild {
     );
   }
 
+  private handleInvalidToken(): void {
+    this.tokenService.clearTokens();
+    this.lastVerificationTime = 0; // Reset verification time
+    this.router.navigate(['/auth/signin']);
+  }
+
   canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     if (!this.tokenService.getAccessToken()) {
-      this.router.navigate(['/auth/signin']);
+      this.handleInvalidToken();
       return of(false);
     }
 
