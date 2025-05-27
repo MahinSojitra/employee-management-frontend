@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivateChild, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
 import { Observable, of } from 'rxjs';
@@ -8,14 +8,14 @@ import { catchError, map, take, switchMap } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivateChild {
   constructor(
     private authService: AuthService,
     private tokenService: TokenService,
     private router: Router
   ) { }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     // First check if we have a token
     if (!this.tokenService.getAccessToken()) {
       this.router.navigate(['/auth/signin']);
@@ -42,7 +42,7 @@ export class AuthGuard implements CanActivate {
         }
 
         // Check roles if required
-        const requiredRoles = route.data['roles'] as Array<string>;
+        const requiredRoles = childRoute.data['roles'] as Array<string>;
         if (requiredRoles && requiredRoles.length > 0) {
           const user = this.tokenService.getUser();
           if (!user || !user.roles.some(role => requiredRoles.includes(role))) {
