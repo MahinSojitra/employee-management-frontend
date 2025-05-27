@@ -11,6 +11,7 @@ import { catchError, map, switchMap, take, shareReplay, tap } from 'rxjs/operato
 export class AuthGuard implements CanActivateChild {
   private lastVerificationTime = 0;
   private readonly VERIFICATION_INTERVAL = 60000; // 60 seconds
+  private verificationTrigger$ = new BehaviorSubject<void>(undefined);
   private verificationStream$: Observable<boolean>;
 
   constructor(
@@ -19,7 +20,7 @@ export class AuthGuard implements CanActivateChild {
     private router: Router
   ) {
     // Create a shared verification stream
-    this.verificationStream$ = new BehaviorSubject<void>(undefined).pipe(
+    this.verificationStream$ = this.verificationTrigger$.pipe(
       switchMap(() => {
         const now = Date.now();
         const timeSinceLastVerification = now - this.lastVerificationTime;
@@ -68,7 +69,7 @@ export class AuthGuard implements CanActivateChild {
     // Force a new verification if needed
     const now = Date.now();
     if (now - this.lastVerificationTime >= this.VERIFICATION_INTERVAL || this.lastVerificationTime === 0) {
-      (this.verificationStream$ as BehaviorSubject<void>).next();
+      this.verificationTrigger$.next();
     }
 
     return this.verificationStream$.pipe(
