@@ -6,6 +6,7 @@ import { PositionListComponent } from './components/position-list/position-list.
 import { PositionFormComponent } from './components/position-form/position-form.component';
 import { PositionService } from './services/position.service';
 import { PositionRoutingModule } from './position-routing.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 const routes: Routes = [
   { path: '', component: PositionListComponent },
@@ -21,7 +22,8 @@ const routes: Routes = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    PositionRoutingModule
+    PositionRoutingModule,
+    SharedModule
   ],
   providers: [
     PositionService

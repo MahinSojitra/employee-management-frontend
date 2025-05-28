@@ -6,6 +6,7 @@ import { DepartmentListComponent } from './components/department-list/department
 import { DepartmentFormComponent } from './components/department-form/department-form.component';
 import { DepartmentService } from './services/department.service';
 import { DepartmentRoutingModule } from './department-routing.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { DepartmentRoutingModule } from './department-routing.module';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    DepartmentRoutingModule
+    DepartmentRoutingModule,
+    SharedModule
   ],
   providers: [
     DepartmentService

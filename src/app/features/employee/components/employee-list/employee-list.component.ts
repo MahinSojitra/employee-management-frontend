@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee, EmployeeType } from '../../models/employee.model';
+import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
 
 @Component({
   selector: 'app-employee-list',
@@ -9,9 +10,12 @@ import { Employee, EmployeeType } from '../../models/employee.model';
   styleUrls: ['./employee-list.component.scss']
 })
 export class EmployeeListComponent implements OnInit {
+  @ViewChild(DeleteConfirmationComponent) deleteConfirmation!: DeleteConfirmationComponent;
+
   employees: Employee[] = [];
   loading = false;
   error: string | null = null;
+  selectedEmployee: Employee | null = null;
 
   constructor(
     private employeeService: EmployeeService,
@@ -38,11 +42,18 @@ export class EmployeeListComponent implements OnInit {
     });
   }
 
-  onDelete(id: string): void {
-    if (confirm('Are you sure you want to delete this employee?')) {
-      this.employeeService.deleteEmployee(id).subscribe({
+  onDeleteClick(employee: Employee): void {
+    this.selectedEmployee = employee;
+    this.deleteConfirmation.itemName = employee.firstName + ' ' + employee.lastName;
+    this.deleteConfirmation.itemType = 'employee';
+    this.deleteConfirmation.show();
+  }
+
+  onDeleteConfirm(): void {
+    if (this.selectedEmployee) {
+      this.employeeService.deleteEmployee(this.selectedEmployee.id).subscribe({
         next: () => {
-          this.employees = this.employees.filter(emp => emp.id !== id);
+          this.employees = this.employees.filter(emp => emp.id !== this.selectedEmployee?.id);
         },
         error: (error) => {
           this.error = error.error?.message || 'Failed to delete employee';

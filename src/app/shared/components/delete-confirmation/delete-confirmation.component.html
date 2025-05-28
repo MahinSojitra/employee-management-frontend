@@ -1,0 +1,63 @@
+<div
+  class="modal fade"
+  id="deleteConfirmationModal"
+  tabindex="-1"
+  aria-labelledby="deleteConfirmationModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5
+          class="modal-title d-flex align-items-center"
+          id="deleteConfirmationModalLabel"
+        >
+          <i class="bi bi-exclamation-circle-fill text-danger me-2 fs-5"></i>
+          Delete Confirmation
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body px-4 py-3">
+        <div class="d-flex">
+          <div class="me-3">
+            <i
+              class="bi bi-trash-fill text-danger"
+              style="font-size: 2.5rem"
+            ></i>
+          </div>
+          <div>
+            <h6 class="text-danger fw-bold mb-2">Are you absolutely sure?</h6>
+            <small class="mb-0 text-muted">
+              You are about to delete the {{ itemType }}
+              <strong class="text-dark">{{ itemName }}</strong
+              >.
+              <br />
+              This action
+              <span class="text-danger fw-semibold">cannot be undone</span>.
+              Please proceed with caution.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-bs-dismiss="modal"
+        >
+          <i class="bi bi-x-circle me-1"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-danger" (click)="onConfirm()">
+          <i class="bi bi-trash me-1"></i>Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

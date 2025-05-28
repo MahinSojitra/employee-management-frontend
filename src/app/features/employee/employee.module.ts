@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { EmployeeRoutingModule } from './employee-routing.module';
 import { EmployeeListComponent } from './components/employee-list/employee-list.component';
 import { EmployeeFormComponent } from './components/employee-form/employee-form.component';
-import { EmployeeRoutingModule } from './employee-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -12,9 +13,9 @@ import { EmployeeRoutingModule } from './employee-routing.module';
   ],
   imports: [
     CommonModule,
+    EmployeeRoutingModule,
     ReactiveFormsModule,
-    FormsModule,
-    EmployeeRoutingModule
+    SharedModule
   ]
 })
 export class EmployeeModule { }

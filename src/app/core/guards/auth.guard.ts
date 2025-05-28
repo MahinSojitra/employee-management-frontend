@@ -120,10 +120,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
         // Role check
         const requiredRoles = childRoute.data['roles'] as Array<string>;
         if (requiredRoles && requiredRoles.length > 0) {
-          const user = this.tokenService.getUser();
-          if (!user || !user.roles.some(role => requiredRoles.includes(role))) {
-            this.router.navigate(['/unauthorized']);
-            return of(false);
+        const user = this.tokenService.getUser();
+        if (!user || !user.roles.some(role => requiredRoles.includes(role))) {
+          this.router.navigate(['/unauthorized']);
+          return of(false);
           }
         }
 
