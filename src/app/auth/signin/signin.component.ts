@@ -37,6 +37,19 @@ export class SigninComponent implements OnInit {
     return this.signinForm.get('password')!;
   }
 
+  private getErrorMessage(error: any): string {
+    if (error?.status === 401) {
+      return 'Invalid email or password. Please try again.';
+    }
+    if (error?.status === 0) {
+      return 'Unable to connect to the server. Please check your internet connection.';
+    }
+    if (error?.status === 500) {
+      return 'Something went wrong on our end. Please try again later.';
+    }
+    return 'An error occurred during sign in. Please try again.';
+  }
+
   onSubmit(): void {
     if (this.signinForm.valid) {
       this.errorMessage = null;
@@ -53,8 +66,7 @@ export class SigninComponent implements OnInit {
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorMessage =
-            err?.error?.message || err.message || 'Signin failed. Please try again.';
+          this.errorMessage = this.getErrorMessage(err);
           console.error('Signin error:', err);
         }
       });
