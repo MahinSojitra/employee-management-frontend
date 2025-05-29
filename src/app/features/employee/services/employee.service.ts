@@ -40,8 +40,8 @@ export class EmployeeService {
     });
   }
 
-  updateEmployee(id: string, employee: EmployeeFormData): Observable<SingleEmployeeResponse> {
-    return this.http.put<SingleEmployeeResponse>(`${this.API_URL}/${id}`, employee, {
+  updateEmployee(employee: EmployeeFormData): Observable<SingleEmployeeResponse> {
+    return this.http.put<SingleEmployeeResponse>(this.API_URL, employee, {
       headers: this.getHeaders()
     });
   }

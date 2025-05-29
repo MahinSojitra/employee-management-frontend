@@ -38,6 +38,7 @@ export class EmployeeFormComponent implements OnInit {
     private router: Router
   ) {
     this.employeeForm = this.fb.group({
+      id: [''],
       email: ['', [Validators.required, Validators.email]],
       userName: ['', [Validators.required, Validators.minLength(3)]],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
@@ -111,6 +112,7 @@ export class EmployeeFormComponent implements OnInit {
           const position = this.positions.find(p => p.title === employee.positionTitle);
 
           this.employeeForm.patchValue({
+            id: employee.id,
             email: employee.email,
             userName: employee.userName,
             firstName: employee.firstName,
@@ -143,8 +145,9 @@ export class EmployeeFormComponent implements OnInit {
     };
 
     const request = this.isEditMode
-      ? this.employeeService.updateEmployee(this.employeeId!, formData)
+      ? this.employeeService.updateEmployee(formData)
       : this.employeeService.createEmployee(formData);
+
     request.subscribe({
       next: (res) => {
         this.router.navigate(['/employees']);
