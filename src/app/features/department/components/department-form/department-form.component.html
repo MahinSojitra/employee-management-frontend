@@ -4,10 +4,7 @@
       <div class="card shadow-sm">
         <div class="card-header bg-white">
           <h5 class="card-title mb-0">
-            <i
-              class="bi"
-              [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-plus-square'"
-            ></i>
+            <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-plus-square'"></i>
             {{ isEditMode ? "Edit" : "Add" }} Department
           </h5>
         </div>
@@ -26,30 +23,17 @@
           </div>
 
           <!-- Department Form -->
-          <form
-            [formGroup]="departmentForm"
-            (ngSubmit)="onSubmit()"
-            *ngIf="!loading"
-          >
+          <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
             <div class="mb-4">
               <label for="name" class="form-label">Department Name</label>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="bi bi-building"></i>
                 </span>
-                <input
-                  type="text"
-                  id="name"
-                  formControlName="name"
-                  class="form-control"
-                  [ngClass]="{ 'is-invalid': name?.invalid && name?.touched }"
-                  placeholder="Enter department name"
-                />
+                <input type="text" id="name" formControlName="name" class="form-control"
+                  [ngClass]="{ 'is-invalid': name?.invalid && name?.touched }" placeholder="Enter department name" />
               </div>
-              <div
-                *ngIf="name?.invalid && name?.touched"
-                class="invalid-feedback d-block"
-              >
+              <div *ngIf="name?.invalid && name?.touched" class="invalid-feedback d-block">
                 <div *ngIf="name?.errors?.['required']">
                   Department name is required
                 </div>
@@ -63,28 +47,20 @@
             </div>
 
             <div class="d-flex gap-2">
-              <button
-                type="submit"
-                class="btn btn-primary flex-grow-1"
-                [disabled]="departmentForm.invalid || loading"
-              >
-                <span
-                  *ngIf="loading"
-                  class="spinner-border spinner-border-sm me-2"
-                  role="status"
-                ></span>
-                <i
-                  *ngIf="!loading"
-                  class="bi"
-                  [ngClass]="isEditMode ? 'bi-save' : 'bi-plus-lg'"
-                ></i>
-                {{ isEditMode ? "Update" : "Create" }} Department
+              <button type="submit" class="btn btn-primary flex-grow-1"
+                [disabled]="departmentForm.invalid || loading || isSubmitting">
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+
+                <ng-container *ngIf="!isSubmitting">
+                  <i *ngIf="!loading" class="bi" [ngClass]="isEditMode ? 'bi-save' : 'bi-plus-lg'"></i>
+                  {{ isEditMode ? 'Update' : 'Create' }} Department
+                </ng-container>
+
+                <ng-container *ngIf="isSubmitting">
+                  {{ isEditMode ? 'Updating' : 'Creating' }}...
+                </ng-container>
               </button>
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                routerLink="/departments"
-              >
+              <button type="button" class="btn btn-outline-secondary" routerLink="/departments">
                 <i class="bi bi-x-lg me-2"></i>Cancel
               </button>
             </div>

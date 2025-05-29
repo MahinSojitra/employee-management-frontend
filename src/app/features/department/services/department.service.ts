@@ -40,8 +40,8 @@ export class DepartmentService {
     });
   }
 
-  updateDepartment(id: string, department: Omit<Department, 'id'>): Observable<SingleDepartmentResponse> {
-    return this.http.put<SingleDepartmentResponse>(`${this.API_URL}/${id}`, department, {
+  updateDepartment(department: Department): Observable<SingleDepartmentResponse> {
+    return this.http.put<SingleDepartmentResponse>(this.API_URL, department, {
       headers: this.getHeaders()
     });
   }

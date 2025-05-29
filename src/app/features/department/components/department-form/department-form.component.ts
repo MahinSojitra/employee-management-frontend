@@ -12,6 +12,7 @@ export class DepartmentFormComponent implements OnInit {
   departmentForm: FormGroup;
   isEditMode = false;
   loading = false;
+  isSubmitting = false;
   error: string | null = null;
   departmentId: string | null = null;
 
@@ -22,6 +23,7 @@ export class DepartmentFormComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.departmentForm = this.fb.group({
+      id: [''],
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]]
     });
   }
@@ -44,7 +46,10 @@ export class DepartmentFormComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            this.departmentForm.patchValue(response.data);
+            this.departmentForm.patchValue({
+              id: response.data.id,
+              name: response.data.name
+            });
           } else {
             this.error = 'Failed to load department';
           }
@@ -61,13 +66,13 @@ export class DepartmentFormComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.isSubmitting = true;
     this.error = null;
 
     const departmentData = this.departmentForm.value;
 
     const request = this.isEditMode
-      ? this.departmentService.updateDepartment(this.departmentId!, departmentData)
+      ? this.departmentService.updateDepartment(departmentData)
       : this.departmentService.createDepartment(departmentData);
 
     request
@@ -85,6 +90,9 @@ export class DepartmentFormComponent implements OnInit {
         error: (err) => {
           this.error = `An error occurred while ${this.isEditMode ? 'updating' : 'creating'} department`;
           console.error('Department operation error:', err);
+        },
+        complete: () => {
+          this.isSubmitting = false;
         }
       });
   }

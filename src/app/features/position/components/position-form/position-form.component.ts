@@ -13,6 +13,7 @@ export class PositionFormComponent implements OnInit {
   positionForm: FormGroup;
   isEditMode = false;
   loading = false;
+  isSubmitting = false;
   error: string | null = null;
   positionId: string | null = null;
 
@@ -23,6 +24,7 @@ export class PositionFormComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.positionForm = this.fb.group({
+      id: [''],
       title: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]]
     });
@@ -46,7 +48,11 @@ export class PositionFormComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            this.positionForm.patchValue(response.data);
+            this.positionForm.patchValue({
+              id: response.data.id,
+              title: response.data.title,
+              description: response.data.description
+            });
           } else {
             this.error = 'Failed to load position';
           }
@@ -63,13 +69,13 @@ export class PositionFormComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.isSubmitting = true;
     this.error = null;
 
     const positionData = this.positionForm.value;
 
     const request = this.isEditMode
-      ? this.positionService.updatePosition(this.positionId!, positionData)
+      ? this.positionService.updatePosition(positionData)
       : this.positionService.createPosition(positionData);
 
     request
@@ -87,6 +93,9 @@ export class PositionFormComponent implements OnInit {
         error: (err) => {
           this.error = `An error occurred while ${this.isEditMode ? 'updating' : 'creating'} position`;
           console.error('Position operation error:', err);
+        },
+        complete: () => {
+          this.isSubmitting = false;
         }
       });
   }

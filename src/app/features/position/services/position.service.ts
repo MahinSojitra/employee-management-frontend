@@ -40,8 +40,8 @@ export class PositionService {
     });
   }
 
-  updatePosition(id: string, position: Omit<Position, 'id'>): Observable<SinglePositionResponse> {
-    return this.http.put<SinglePositionResponse>(`${this.API_URL}/${id}`, position, {
+  updatePosition(position: Position): Observable<SinglePositionResponse> {
+    return this.http.put<SinglePositionResponse>(`${this.API_URL}`, position, {
       headers: this.getHeaders()
     });
   }
