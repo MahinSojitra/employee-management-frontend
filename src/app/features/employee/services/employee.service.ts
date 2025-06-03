@@ -8,6 +8,8 @@ import {
 } from '../models/employee.model';
 import { TokenService } from '../../../core/services/token.service';
 import { environment } from 'environments/environment';
+import { CreateEmployeeDTO } from '../models/create-employee.dto';
+import { omitKeys } from 'src/app/core/utils/object-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -36,9 +38,10 @@ export class EmployeeService {
   }
 
   createEmployee(
-    employee: Omit<EmployeeFormData, 'id'>
+    employee: EmployeeFormData
   ): Observable<SingleEmployeeResponse> {
-    return this.http.post<SingleEmployeeResponse>(this.API_URL, employee, {
+    const createEmployeePayload = omitKeys(employee, ['id'] as const);
+    return this.http.post<SingleEmployeeResponse>(this.API_URL, createEmployeePayload, {
       headers: this.getHeaders(),
     });
   }

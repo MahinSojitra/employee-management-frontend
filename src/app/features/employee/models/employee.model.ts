@@ -36,6 +36,7 @@ export interface SingleEmployeeResponse {
 }
 
 export interface EmployeeFormData {
+  id?: string;
   email: string;
   userName: string;
   firstName: string;
