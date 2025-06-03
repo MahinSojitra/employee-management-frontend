@@ -76,19 +76,4 @@ export class EmployeeListComponent implements OnInit {
         return 'Unknown';
     }
   }
-
-  getEmployeeTypeClass(type: EmployeeType): string {
-    switch (type) {
-      case EmployeeType.FullTime:
-        return 'bg-primary';
-      case EmployeeType.PartTime:
-        return 'bg-info';
-      case EmployeeType.Intern:
-        return 'bg-warning';
-      case EmployeeType.Contract:
-        return 'bg-secondary';
-      default:
-        return 'bg-secondary';
-    }
-  }
 }
