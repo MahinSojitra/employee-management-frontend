@@ -46,6 +46,20 @@ export class AdminLeaveComponent implements OnInit {
     return this.leaves.filter(leave => leave.status === 'Pending');
   }
 
+  get recentApprovedLeaves(): Leave[] {
+    return this.leaves
+      .filter(leave => leave.status === 'Approved')
+      .slice(-5)
+      .reverse(); // Most recent first
+  }
+
+  get recentRejectedLeaves(): Leave[] {
+    return this.leaves
+      .filter(leave => leave.status === 'Rejected')
+      .slice(-5)
+      .reverse(); // Most recent first
+  }
+
   approveLeave(leaveId: string): void {
     this.leaveService.approveLeaveRequest(leaveId)
       .pipe(

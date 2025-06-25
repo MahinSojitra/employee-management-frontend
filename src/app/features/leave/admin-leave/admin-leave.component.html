@@ -19,16 +19,24 @@
     <p class="mt-2 text-muted">Loading leave requests...</p>
   </div>
 
-  <div *ngIf="!loading && pendingLeaves.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  <div
+    *ngIf="!loading && pendingLeaves.length > 0"
+    class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
+  >
     <div *ngFor="let leave of pendingLeaves" class="col">
-      <div class="card h-100">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="card-title mb-0">Leave Request</h5>
-          <span class="badge" [ngClass]="{
+      <div class="card h-100 shadow-sm">
+        <div
+          class="card-header d-flex justify-content-between align-items-center bg-success bg-opacity-10"
+        >
+          <h6 class="card-title mb-0">Leave Request</h6>
+          <span
+            class="badge"
+            [ngClass]="{
               'bg-secondary': leave.status === 'Pending',
               'bg-success': leave.status === 'Approved',
               'bg-danger': leave.status === 'Rejected'
-            }">
+            }"
+          >
             {{ leave.status }}
           </span>
         </div>
@@ -60,13 +68,23 @@
             </p>
           </div>
         </div>
-        <div class="card-footer bg-transparent d-flex justify-content-end gap-2">
-          <button class="btn btn-outline-success btn-sm" (click)="approveLeave(leave.id!)"
-            [disabled]="leave.status === 'Approved'" title="Approve">
+        <div
+          class="card-footer bg-transparent d-flex justify-content-end gap-2"
+        >
+          <button
+            class="btn btn-outline-success btn-sm"
+            (click)="approveLeave(leave.id!)"
+            [disabled]="leave.status === 'Approved'"
+            title="Approve"
+          >
             <i class="bi bi-check-lg"></i> Approve
           </button>
-          <button class="btn btn-outline-danger btn-sm" (click)="rejectLeave(leave.id!)"
-            [disabled]="leave.status === 'Rejected'" title="Reject">
+          <button
+            class="btn btn-outline-danger btn-sm"
+            (click)="rejectLeave(leave.id!)"
+            [disabled]="leave.status === 'Rejected'"
+            title="Reject"
+          >
             <i class="bi bi-x-lg"></i> Reject
           </button>
         </div>
@@ -77,5 +95,154 @@
   <div *ngIf="!loading && pendingLeaves.length === 0" class="text-center py-5">
     <i class="bi bi-inbox text-muted fs-1"></i>
     <p class="text-muted mt-0">No pending leave requests found.</p>
+  </div>
+
+  <!-- Bootstrap Accordion for Recent Leaves Section -->
+  <div class="accordion mt-5 mb-4" id="recentLeavesAccordion">
+    <div class="accordion-item shadow-sm rounded">
+      <h2 class="accordion-header" id="recentLeavesHeading">
+        <button
+          class="accordion-button collapsed fw-semibold bg-light"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#recentLeavesCollapse"
+          aria-expanded="false"
+          aria-controls="recentLeavesCollapse"
+        >
+          <i class="bi bi-clock-history me-2"></i>
+          <span class="text-dark">Recent Leaves</span>
+        </button>
+      </h2>
+      <div
+        id="recentLeavesCollapse"
+        class="accordion-collapse collapse"
+        aria-labelledby="recentLeavesHeading"
+        data-bs-parent="#recentLeavesAccordion"
+      >
+        <div class="accordion-body bg-light-subtle rounded-bottom">
+          <!-- Recently Approved Leaves -->
+          <div *ngIf="recentApprovedLeaves.length > 0" class="mb-4">
+            <h6 class="mb-3 text-success d-flex align-items-center">
+              <i class="bi bi-check-circle-fill me-2"></i>
+              <span class="fw-semibold">Recently Approved Leaves</span>
+            </h6>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+              <div *ngFor="let leave of recentApprovedLeaves" class="col">
+                <div class="card h-100 shadow-sm">
+                  <div
+                    class="card-header d-flex justify-content-between align-items-center bg-success bg-opacity-10"
+                  >
+                    <h6 class="card-title mb-0">Leave Request</h6>
+                    <span class="badge bg-success">Approved</span>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <div class="fw-semibold text-muted small mb-1">
+                        Employee
+                      </div>
+                      <p class="card-text mb-1">
+                        <i class="bi bi-person me-2"></i>
+                        {{ leave.employeeFirstName }}
+                        {{ leave.employeeLastName }}
+                      </p>
+                      <p class="card-text mb-1">
+                        <i class="bi bi-envelope me-2"></i>
+                        {{ leave.employeeEmail }}
+                      </p>
+                    </div>
+                    <div class="mb-3">
+                      <div class="fw-semibold text-muted small mb-1">
+                        Leave Details
+                      </div>
+                      <p class="card-text mb-1">
+                        <i class="bi bi-calendar-event me-2"></i>
+                        From: {{ leave.startDate | date : "mediumDate" }}
+                      </p>
+                      <p class="card-text mb-1">
+                        <i class="bi bi-calendar-event me-2"></i>
+                        To: {{ leave.endDate | date : "mediumDate" }}
+                      </p>
+                      <p class="card-text">
+                        <i class="bi bi-chat-left-text me-2"></i>
+                        Reason: {{ leave.reason }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr
+            class="my-4"
+            *ngIf="
+              recentApprovedLeaves.length > 0 && recentRejectedLeaves.length > 0
+            "
+          />
+
+          <!-- Recently Rejected Leaves -->
+          <div *ngIf="recentRejectedLeaves.length > 0">
+            <h6 class="mb-3 text-danger d-flex align-items-center">
+              <i class="bi bi-x-circle-fill me-2"></i>
+              <span class="fw-semibold">Recently Rejected Leaves</span>
+            </h6>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+              <div *ngFor="let leave of recentRejectedLeaves" class="col">
+                <div class="card h-100 shadow-sm">
+                  <div
+                    class="card-header d-flex justify-content-between align-items-center bg-danger bg-opacity-10"
+                  >
+                    <h6 class="card-title mb-0">Leave Request</h6>
+                    <span class="badge bg-danger">Rejected</span>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <div class="fw-semibold text-muted small mb-1">
+                        Employee
+                      </div>
+                      <p class="card-text mb-1">
+                        <i class="bi bi-person me-2"></i>
+                        {{ leave.employeeFirstName }}
+                        {{ leave.employeeLastName }}
+                      </p>
+                      <p class="card-text mb-1">
+                        <i class="bi bi-envelope me-2"></i>
+                        {{ leave.employeeEmail }}
+                      </p>
+                    </div>
+                    <div class="mb-3">
+                      <div class="fw-semibold text-muted small mb-1">
+                        Leave Details
+                      </div>
+                      <p class="card-text mb-1">
+                        <i class="bi bi-calendar-event me-2"></i>
+                        From: {{ leave.startDate | date : "mediumDate" }}
+                      </p>
+                      <p class="card-text mb-1">
+                        <i class="bi bi-calendar-event me-2"></i>
+                        To: {{ leave.endDate | date : "mediumDate" }}
+                      </p>
+                      <p class="card-text">
+                        <i class="bi bi-chat-left-text me-2"></i>
+                        Reason: {{ leave.reason }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="
+              recentApprovedLeaves.length === 0 &&
+              recentRejectedLeaves.length === 0
+            "
+            class="text-center text-muted py-4"
+          >
+            No recent leaves found.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
